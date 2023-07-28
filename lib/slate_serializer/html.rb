@@ -59,7 +59,7 @@ module SlateSerializer
         {
           document: {
             object: 'document',
-            nodes: nodes
+            children: nodes
           }
         }
       end
@@ -93,12 +93,12 @@ module SlateSerializer
           end
         end.compact
 
-        nodes << { marks: [], object: 'text', text: '' } if nodes.empty? && type != 'image'
+        nodes << { object: 'text', text: '' } if nodes.empty? && type != 'image'
 
         {
           data: element.attributes.each_with_object({}) { |a, h| h[a[1].name] = a[1].value },
           object: 'block',
-          nodes: nodes,
+          children: nodes,
           type: type
         }
       end
@@ -112,7 +112,7 @@ module SlateSerializer
         {
           data: element.attributes.each_with_object({}) { |a, h| h[a[1].name] = a[1].value },
           object: 'inline',
-          nodes: nodes,
+          children: nodes,
           type: type
         }
       end
@@ -134,11 +134,17 @@ module SlateSerializer
 
       def element_to_text(element, mark = nil)
         marks = [mark, convert_name_to_mark(element.name)].compact
-        {
-          marks: marks,
+
+        combined_marks = marks.reduce({}) do |accum, mark|
+          accum.merge({
+            "#{mark}": true
+          })
+        end
+
+        combined_marks.merge({
           object: 'text',
           text: element.text
-        }
+        })
       end
 
       def convert_name_to_type(element)
@@ -151,11 +157,8 @@ module SlateSerializer
 
         return nil unless type
 
-        {
-          data: [],
-          object: 'mark',
-          type: type
-        }
+        # ex: "bold"
+        return type
       end
 
       def block?(element)
@@ -170,14 +173,13 @@ module SlateSerializer
         {
           document: {
             object: 'document',
-            nodes: [
+            children: [
               {
                 data: {},
                 object: 'block',
                 type: 'paragraph',
-                nodes: [
+                children: [
                   {
-                    marks: [],
                     object: 'text',
                     text: ''
                   }
@@ -190,9 +192,9 @@ module SlateSerializer
 
       def serialize_node(node)
         if node[:object] == 'document'
-          node[:nodes].map { |n| serialize_node(n) }.join
+          node[:children].map { |n| serialize_node(n) }.join
         elsif node[:object] == 'block'
-          children = node[:nodes].map { |n| serialize_node(n) }.join
+          children = node[:children].map { |n| serialize_node(n) }.join
 
           element = ELEMENTS.find { |_, v| v == node[:type] }[0]
           data = node[:data].map { |k, v| "#{k}=\"#{v}\"" }

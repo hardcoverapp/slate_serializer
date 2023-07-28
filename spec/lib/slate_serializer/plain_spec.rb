@@ -21,14 +21,13 @@ RSpec.describe SlateSerializer::Plain do
         expect(described_class.deserializer(nil)).to eq(
           document: {
             object: 'document',
-            nodes: [
+            children: [
               {
                 data: {},
                 object: 'block',
                 type: 'paragraph',
-                nodes: [
+                children: [
                   {
-                    marks: [],
                     object: 'text',
                     text: ''
                   }
@@ -45,9 +44,9 @@ RSpec.describe SlateSerializer::Plain do
         raw = described_class.deserializer(text)
 
         expect(raw[:document][:object]).to eq 'document'
-        expect(raw[:document][:nodes].length).to be 4
-        expect(raw[:document][:nodes][2][:type]).to eq 'paragraph'
-        expect(raw[:document][:nodes][2][:nodes][0][:text]).to eq "3. Number three\nSome text on the next line"
+        expect(raw[:document][:children].length).to be 4
+        expect(raw[:document][:children][2][:type]).to eq 'paragraph'
+        expect(raw[:document][:children][2][:children][0][:text]).to eq "3. Number three\nSome text on the next line"
       end
     end
   end
@@ -64,18 +63,18 @@ RSpec.describe SlateSerializer::Plain do
         value = {
           document: {
             object: 'document',
-            nodes: [
+            children: [
               {
                 object: 'block',
                 type: 'paragraph',
-                nodes: [
+                children: [
                   { text: 'Some text and lalala' }
                 ]
               },
               {
                 object: 'block',
                 type: 'paragraph',
-                nodes: [
+                children: [
                   { text: 'Next line' }
                 ]
               }

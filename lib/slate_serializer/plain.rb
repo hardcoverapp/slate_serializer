@@ -13,7 +13,7 @@ module SlateSerializer
         {
           document: {
             object: 'document',
-            nodes: convert_lines_into_nodes(lines)
+            children: convert_lines_into_nodes(lines)
           }
         }
       end
@@ -56,10 +56,9 @@ module SlateSerializer
             object: 'block',
             type: 'paragraph',
             data: {},
-            nodes: [
+            children: [
               object: 'text',
               text: line,
-              marks: []
             ]
           }
         end
@@ -67,7 +66,7 @@ module SlateSerializer
 
       def serialize_node(node, options)
         if node[:object] == 'document' || node[:object] == 'block'
-          node[:nodes].map { |n| serialize_node(n, options) }.join(options[:delimiter])
+          node[:children].map { |n| serialize_node(n, options) }.join(options[:delimiter])
         else
           node[:text]
         end

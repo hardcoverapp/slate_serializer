@@ -1,18 +1,18 @@
 PATH
   remote: .
   specs:
-    slate_serializer (0.5.1)
+    slate_serializer (1.0.0)
       nokogiri (~> 1.11)
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.4.4)
-    mini_portile2 (2.8.1)
-    nokogiri (1.14.3)
-      mini_portile2 (~> 2.8.0)
+    mini_portile2 (2.8.4)
+    nokogiri (1.15.3)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    racc (1.6.2)
+    racc (1.7.1)
     rake (13.0.3)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
